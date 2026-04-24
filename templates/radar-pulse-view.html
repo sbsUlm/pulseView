@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AoA Radar Pulse Viewer</title>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"] {
+      --text-xs: clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+      --text-sm: clamp(0.875rem,0.8rem + 0.35vw,1rem);
+      --text-base: clamp(1rem,0.95rem + 0.25vw,1.125rem);
+      --text-lg: clamp(1.125rem,1rem + 0.75vw,1.5rem);
+      --text-xl: clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+      --space-1:0.25rem; --space-2:0.5rem; --space-3:0.75rem; --space-4:1rem; --space-6:1.5rem; --space-8:2rem; --space-12:3rem;
+      --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-border:#d4d1ca; --color-text:#28251d; --color-text-muted:#67645f; --color-primary:#01696f; --color-blue:#006494; --color-orange:#da7101; --color-success:#437a22;
+      --shadow-md:0 8px 24px rgba(24,24,24,.08); --radius-lg:0.75rem; --radius-xl:1rem; --font-body:'Satoshi',sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg:#111315; --color-surface:#171b1e; --color-surface-2:#1d2328; --color-border:#313840; --color-text:#d5d8dc; --color-text-muted:#90969d; --color-primary:#57a5ad; --color-blue:#6aa8d8; --color-orange:#f2aa48; --color-success:#7bb866; --shadow-md:0 10px 28px rgba(0,0,0,.35);
+    }
+    *,*:before,*:after{box-sizing:border-box}
+    html,body{height:100%;margin:0;overflow:hidden;background:radial-gradient(circle at top,var(--color-surface-2),var(--color-bg) 48%);color:var(--color-text);font-family:var(--font-body);}
+    button{font:inherit}
+    .shell{display:grid;grid-template-columns:minmax(320px,420px) 1fr;height:100dvh}
+    .panel{border-right:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);background:color-mix(in oklab,var(--color-surface) 92%, transparent);padding:var(--space-6);overflow:auto}
+    .title{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-6)}
+    .brand{display:flex;gap:var(--space-3);align-items:center}
+    .brand svg{width:42px;height:42px;color:var(--color-primary)}
+    h1{font-size:var(--text-xl);line-height:1.1;margin:0}
+    .muted{color:var(--color-text-muted);font-size:var(--text-sm)}
+    .stack{display:grid;gap:var(--space-4)}
+    .card{background:linear-gradient(180deg,color-mix(in oklab,var(--color-surface-2) 94%, transparent), color-mix(in oklab,var(--color-surface) 92%, transparent));border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);border-radius:var(--radius-xl);padding:var(--space-4);box-shadow:var(--shadow-md)}
+    .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)}
+    .metric .value{font-size:var(--text-lg);font-weight:700}
+    .legend{display:grid;gap:var(--space-2);font-size:var(--text-sm)}
+    .legend-row{display:grid;grid-template-columns:14px 1fr auto;gap:var(--space-3);align-items:center}
+    .dot{width:12px;height:12px;border-radius:999px}
+    .canvas-wrap{position:relative;display:grid;place-items:center;padding:var(--space-6)}
+    canvas{width:min(92vh,92vw);height:min(92vh,92vw);max-width:100%;max-height:100%;display:block;filter:drop-shadow(0 22px 40px rgba(0,0,0,.28))}
+    .overlay{position:absolute;left:var(--space-8);top:var(--space-8);display:flex;gap:var(--space-4);flex-wrap:wrap}
+    .chip{padding:0.45rem 0.8rem;border-radius:999px;background:color-mix(in oklab,var(--color-surface-2) 78%, transparent);border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);font-size:var(--text-sm);backdrop-filter:blur(8px)}
+    .footer-note{font-size:var(--text-xs);color:var(--color-text-muted)}
+    @media (max-width: 900px){.shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}.panel{border-right:none;border-bottom:1px solid color-mix(in oklab,var(--color-text) 12%, transparent)}.canvas-wrap{padding:var(--space-3)}.overlay{left:var(--space-3);top:var(--space-3)}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel">
+      <div class="title">
+        <div class="brand">
+          <svg viewBox="0 0 64 64" fill="none" aria-label="Radar logo">
+            <circle cx="32" cy="32" r="24" stroke="currentColor" stroke-width="4" opacity=".35"></circle>
+            <path d="M32 10 A22 22 0 0 1 54 32" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M32 32 L47 20" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path>
+            <circle cx="32" cy="32" r="4" fill="currentColor"></circle>
+          </svg>
+          <div>
+            <h1>AoA Pulse Scope</h1>
+            <div class="muted">UDP Broadcast ingest · Server rendering cadence</div>
+          </div>
+        </div>
+        <button id="themeToggle" class="chip" aria-label="Theme wechseln">◐</button>
+      </div>
+
+      <div class="stack">
+        <section class="card metrics">
+          <div class="metric"><div class="muted">Letzte Pulse</div><div id="pulseCount" class="value">0</div></div>
+          <div class="metric"><div class="muted">FPS</div><div id="fpsValue" class="value">0</div></div>
+          <div class="metric"><div class="muted">Stärkster AoA</div><div id="maxAngle" class="value">-</div></div>
+          <div class="metric"><div class="muted">Signal max</div><div id="maxStrength" class="value">-</div></div>
+        </section>
+
+        <section class="card">
+          <div class="muted" style="margin-bottom: .75rem;">Darstellung</div>
+          <div class="legend">
+            <div class="legend-row"><span class="dot" style="background: var(--color-primary);"></span><span>Pulse-Glow</span><span>Neueste Treffer</span></div>
+            <div class="legend-row"><span class="dot" style="background: var(--color-blue);"></span><span>Distanz</span><span>Signalstärke</span></div>
+            <div class="legend-row"><span class="dot" style="background: var(--color-orange);"></span><span>Winkel</span><span>Angle of Arrival</span></div>
+            <div class="legend-row"><span class="dot" style="background: var(--color-success);"></span><span>Decay</span><span>Video-artiger Nachleuchteffekt</span></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="muted" style="margin-bottom: .75rem;">Architektur</div>
+          <div class="footer-note">Python-Server empfängt UDP-Broadcasts, hält einen Ringpuffer und streamt Pulse per Server-Sent Events an die Weboberfläche. Die Animation entsteht aus laufenden Serverdaten und clientseitigem Canvas-Rendering.</div>
+        </section>
+      </div>
+    </aside>
+
+    <main class="canvas-wrap">
+      <div class="overlay">
+        <div class="chip">Port {{ udp_port }}</div>
+        <div class="chip" id="statusChip">Verbinde…</div>
+      </div>
+      <canvas id="radarCanvas" width="1400" height="1400" aria-label="Radar Pulse Darstellung"></canvas>
+    </main>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('radarCanvas');
+    const ctx = canvas.getContext('2d');
+    const pulses = [];
+    const maxPulseAgeMs = 2400;
+    let fps = 0, frames = 0, lastFpsTs = performance.now();
+
+    const byEmitter = {
+      alpha: '#57a5ad',
+      bravo: '#6aa8d8',
+      charlie: '#f2aa48'
+    };
+
+    function themeSync(){
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      byEmitter.alpha = dark ? '#57a5ad' : '#01696f';
+      byEmitter.bravo = dark ? '#6aa8d8' : '#006494';
+      byEmitter.charlie = dark ? '#f2aa48' : '#da7101';
+    }
+
+    function pushPulse(p){
+      pulses.push({...p, born: performance.now()});
+      if (pulses.length > 300) pulses.shift();
+      updateMetrics();
+    }
+
+    function updateMetrics(){
+      document.getElementById('pulseCount').textContent = pulses.length;
+      document.getElementById('fpsValue').textContent = String(fps);
+      const strongest = pulses.reduce((best, p) => (!best || p.strength > best.strength) ? p : best, null);
+      document.getElementById('maxAngle').textContent = strongest ? `${strongest.angle_deg.toFixed(1)}°` : '-';
+      document.getElementById('maxStrength').textContent = strongest ? strongest.strength.toFixed(2) : '-';
+    }
+
+    function drawRadar(ts){
+      const w = canvas.width, h = canvas.height;
+      const cx = w / 2, cy = h / 2;
+      const radius = Math.min(w, h) * 0.42;
+      const theme = getComputedStyle(document.documentElement);
+      ctx.fillStyle = theme.getPropertyValue('--color-bg').trim() || '#111315';
+      ctx.fillRect(0, 0, w, h);
+
+      const bgGrad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.1);
+      bgGrad.addColorStop(0, 'rgba(87,165,173,0.10)');
+      bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = bgGrad;
+      ctx.beginPath(); ctx.arc(cx, cy, radius * 1.08, 0, Math.PI * 2); ctx.fill();
+
+      for (let i = 1; i <= 4; i++) {
+        ctx.strokeStyle = `rgba(120, 180, 190, ${0.06 + i * 0.04})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * (i / 4), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      for (let deg = 0; deg < 360; deg += 30) {
+        const a = (deg - 90) * Math.PI / 180;
+        ctx.strokeStyle = 'rgba(180, 220, 225, 0.10)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(200, 220, 225, 0.6)';
+        ctx.font = '24px Satoshi';
+        ctx.fillText(String(deg) + '°', cx + Math.cos(a) * (radius + 28) - 18, cy + Math.sin(a) * (radius + 28) + 8);
+      }
+
+      const now = performance.now();
+      while (pulses.length && now - pulses[0].born > maxPulseAgeMs) pulses.shift();
+
+      pulses.forEach((p) => {
+        const age = now - p.born;
+        const fade = Math.max(0, 1 - age / maxPulseAgeMs);
+        const angle = (p.angle_deg - 90) * Math.PI / 180;
+        const r = Math.max(20, p.strength * radius);
+        const x = cx + Math.cos(angle) * r;
+        const y = cy + Math.sin(angle) * r;
+        const color = byEmitter[p.emitter_id] || byEmitter.alpha;
+
+        ctx.strokeStyle = color.replace(')', '');
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(angle) * 18, cy + Math.sin(angle) * 18);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = color + Math.round(fade * 80).toString(16).padStart(2, '0');
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const glow = ctx.createRadialGradient(x, y, 0, x, y, 18 + p.strength * 34);
+        const rgba = hexToRgba(color, 0.5 * fade);
+        glow.addColorStop(0, hexToRgba(color, 0.95 * fade));
+        glow.addColorStop(0.4, rgba);
+        glow.addColorStop(1, hexToRgba(color, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(x, y, 18 + p.strength * 34, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = hexToRgba(color, 0.9 * fade);
+        ctx.beginPath();
+        ctx.arc(x, y, 3 + p.strength * 9, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.fillStyle = 'rgba(220, 240, 245, 0.9)';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      frames++;
+      if (ts - lastFpsTs >= 1000) {
+        fps = frames;
+        frames = 0;
+        lastFpsTs = ts;
+        updateMetrics();
+      }
+      requestAnimationFrame(drawRadar);
+    }
+
+    function hexToRgba(hex, alpha) {
+      const clean = hex.replace('#', '');
+      const bigint = parseInt(clean, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    async function bootstrap() {
+      const res = await fetch('/api/snapshot');
+      const data = await res.json();
+      data.pulses.forEach(pushPulse);
+    }
+
+    let eventSource = null;
+    let reconnectTimer = null;
+
+    function connectStream() {
+      const status = document.getElementById('statusChip');
+
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      status.textContent = 'Verbinde…';
+      eventSource = new EventSource('/stream');
+
+      eventSource.addEventListener('open', () => {
+        status.textContent = 'Live';
+        if (reconnectTimer) {
+          clearTimeout(reconnectTimer);
+          reconnectTimer = null;
+        }
+      });
+
+      eventSource.addEventListener('bootstrap', (e) => {
+        const data = JSON.parse(e.data);
+        pulses.length = 0;
+        data.pulses.forEach(pushPulse);
+      });
+
+      eventSource.addEventListener('pulse', (e) => {
+        pushPulse(JSON.parse(e.data));
+        status.textContent = 'Live';
+      });
+
+      eventSource.onerror = () => {
+        status.textContent = 'Reconnect…';
+        if (eventSource) {
+          eventSource.close();
+          eventSource = null;
+        }
+        if (!reconnectTimer) {
+          reconnectTimer = setTimeout(() => {
+            reconnectTimer = null;
+            connectStream();
+          }, 1200);
+        }
+      };
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+      themeSync();
+    });
+
+    themeSync();
+    bootstrap().catch(() => {});
+    connectStream();
+    requestAnimationFrame(drawRadar);
+  </script>
+</body>
+</html>
