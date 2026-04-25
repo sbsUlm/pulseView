@@ -15,7 +15,7 @@
       --text-xl: clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
       --space-1:0.25rem; --space-2:0.5rem; --space-3:0.75rem; --space-4:1rem; --space-6:1.5rem; --space-8:2rem; --space-12:3rem;
       --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-border:#d4d1ca; --color-text:#28251d; --color-text-muted:#67645f; --color-primary:#01696f; --color-blue:#006494; --color-orange:#da7101; --color-success:#437a22;
-      --shadow-md:0 8px 24px rgba(24,24,24,.08); --radius-lg:0.75rem; --radius-xl:1rem; --font-body:'Satoshi',sans-serif;
+      --shadow-md:0 8px 24px rgba(24,24,24,.08); --radius-lg:0.75rem; --radius-xl:1rem; --radius-full:999px; --font-body:'Satoshi',sans-serif;
     }
     [data-theme="dark"] {
       --color-bg:#111315; --color-surface:#171b1e; --color-surface-2:#1d2328; --color-border:#313840; --color-text:#d5d8dc; --color-text-muted:#90969d; --color-primary:#57a5ad; --color-blue:#6aa8d8; --color-orange:#f2aa48; --color-success:#7bb866; --shadow-md:0 10px 28px rgba(0,0,0,.35);
@@ -23,7 +23,7 @@
     *,*:before,*:after{box-sizing:border-box}
     html,body{height:100%;margin:0;overflow:hidden;background:radial-gradient(circle at top,var(--color-surface-2),var(--color-bg) 48%);color:var(--color-text);font-family:var(--font-body);}
     button{font:inherit}
-    .shell{display:grid;grid-template-columns:minmax(320px,420px) 1fr;height:100dvh}
+    .shell{display:grid;grid-template-columns:minmax(360px,460px) 1fr;height:100dvh}
     .panel{border-right:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);background:color-mix(in oklab,var(--color-surface) 92%, transparent);padding:var(--space-6);overflow:auto}
     .title{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-6)}
     .brand{display:flex;gap:var(--space-3);align-items:center}
@@ -37,12 +37,28 @@
     .legend{display:grid;gap:var(--space-2);font-size:var(--text-sm)}
     .legend-row{display:grid;grid-template-columns:14px 1fr auto;gap:var(--space-3);align-items:center}
     .dot{width:12px;height:12px;border-radius:999px}
+    .table-toolbar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-3);flex-wrap:wrap}
+    .filter-pill{padding:0.35rem 0.7rem;border-radius:var(--radius-full);background:color-mix(in oklab,var(--color-primary) 12%, transparent);border:1px solid color-mix(in oklab,var(--color-primary) 32%, transparent);font-size:var(--text-sm)}
+    .filter-pill.is-empty{background:color-mix(in oklab,var(--color-surface-2) 78%, transparent);border-color:color-mix(in oklab,var(--color-text) 12%, transparent);color:var(--color-text-muted)}
+    .ghost-button{padding:0.45rem 0.8rem;border-radius:var(--radius-full);background:color-mix(in oklab,var(--color-surface-2) 78%, transparent);border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);color:var(--color-text);cursor:pointer}
+    .ghost-button:hover{background:color-mix(in oklab,var(--color-primary) 10%, transparent)}
+    .ghost-button:disabled{opacity:.45;cursor:not-allowed}
+    .table-wrap{overflow:auto;border-radius:var(--radius-lg);border:1px solid color-mix(in oklab,var(--color-text) 10%, transparent)}
+    .emitter-table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+    .emitter-table th,.emitter-table td{padding:0.7rem 0.8rem;text-align:left;border-bottom:1px solid color-mix(in oklab,var(--color-text) 10%, transparent)}
+    .emitter-table th{color:var(--color-text-muted);font-weight:700;background:color-mix(in oklab,var(--color-surface-2) 88%, transparent);position:sticky;top:0}
+    .emitter-table tbody tr:last-child td{border-bottom:none}
+    .emitter-table tbody tr{cursor:pointer;transition:background 160ms ease, box-shadow 160ms ease}
+    .emitter-table tbody tr:hover{background:color-mix(in oklab,var(--color-primary) 10%, transparent)}
+    .emitter-table tbody tr.is-active{background:color-mix(in oklab,var(--color-primary) 18%, transparent);box-shadow:inset 3px 0 0 var(--color-primary)}
+    .emitter-name{font-weight:700}
     .canvas-wrap{position:relative;display:grid;place-items:center;padding:var(--space-6)}
     canvas{width:min(92vh,92vw);height:min(92vh,92vw);max-width:100%;max-height:100%;display:block;filter:drop-shadow(0 22px 40px rgba(0,0,0,.28))}
     .overlay{position:absolute;left:var(--space-8);top:var(--space-8);display:flex;gap:var(--space-4);flex-wrap:wrap}
-    .chip{padding:0.45rem 0.8rem;border-radius:999px;background:color-mix(in oklab,var(--color-surface-2) 78%, transparent);border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);font-size:var(--text-sm);backdrop-filter:blur(8px)}
+    .chip{padding:0.45rem 0.8rem;border-radius:var(--radius-full);background:color-mix(in oklab,var(--color-surface-2) 78%, transparent);border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);font-size:var(--text-sm);backdrop-filter:blur(8px)}
+    .chip.active-filter{border-color:color-mix(in oklab,var(--color-primary) 40%, transparent);background:color-mix(in oklab,var(--color-primary) 16%, transparent)}
     .footer-note{font-size:var(--text-xs);color:var(--color-text-muted)}
-    @media (max-width: 900px){.shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}.panel{border-right:none;border-bottom:1px solid color-mix(in oklab,var(--color-text) 12%, transparent)}.canvas-wrap{padding:var(--space-3)}.overlay{left:var(--space-3);top:var(--space-3)}}
+    @media (max-width: 980px){.shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}.panel{border-right:none;border-bottom:1px solid color-mix(in oklab,var(--color-text) 12%, transparent)}.canvas-wrap{padding:var(--space-3)}.overlay{left:var(--space-3);top:var(--space-3)}}
   </style>
 </head>
 <body>
@@ -58,7 +74,7 @@
           </svg>
           <div>
             <h1>AoA Pulse Scope</h1>
-            <div class="muted">UDP Broadcast ingest · Server rendering cadence</div>
+            <div class="muted">Pulse-Port {{ pulse_port }} · Emitter-Port {{ emitter_port }}</div>
           </div>
         </div>
         <button id="themeToggle" class="chip" aria-label="Theme wechseln">◐</button>
@@ -66,229 +82,395 @@
 
       <div class="stack">
         <section class="card metrics">
-          <div class="metric"><div class="muted">Letzte Pulse</div><div id="pulseCount" class="value">0</div></div>
-          <div class="metric"><div class="muted">FPS</div><div id="fpsValue" class="value">0</div></div>
+          <div class="metric"><div class="muted">Sichtbare Pulse</div><div id="pulseCount" class="value">0</div></div>
+          <div class="metric"><div class="muted">Emitter</div><div id="emitterCount" class="value">0</div></div>
           <div class="metric"><div class="muted">Stärkster AoA</div><div id="maxAngle" class="value">-</div></div>
           <div class="metric"><div class="muted">Signal max</div><div id="maxStrength" class="value">-</div></div>
         </section>
 
         <section class="card">
+          <div class="table-toolbar">
+            <div class="muted">Emitter-Datenstrom</div>
+            <button id="clearFilterButton" class="ghost-button" disabled>Filter löschen</button>
+          </div>
+          <div id="activeFilterLabel" class="filter-pill is-empty">Filter: alle Emitter</div>
+          <div class="table-wrap" style="margin-top: .75rem;">
+            <table class="emitter-table">
+              <thead>
+                <tr>
+                  <th>Emitter</th>
+                  <th>Frequenz</th>
+                  <th>Pegel</th>
+                  <th>Alter</th>
+                </tr>
+              </thead>
+              <tbody id="emitterTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
           <div class="muted" style="margin-bottom: .75rem;">Darstellung</div>
           <div class="legend">
-            <div class="legend-row"><span class="dot" style="background: var(--color-primary);"></span><span>Pulse-Glow</span><span>Neueste Treffer</span></div>
-            <div class="legend-row"><span class="dot" style="background: var(--color-blue);"></span><span>Distanz</span><span>Signalstärke</span></div>
+            <div class="legend-row"><span class="dot" style="background: var(--color-primary);"></span><span>Volle Helligkeit</span><span>Aktiver Filter</span></div>
+            <div class="legend-row"><span class="dot" style="background: var(--color-blue);"></span><span>Schwacher Hintergrund</span><span>Nicht aktive Emitter</span></div>
             <div class="legend-row"><span class="dot" style="background: var(--color-orange);"></span><span>Winkel</span><span>Angle of Arrival</span></div>
-            <div class="legend-row"><span class="dot" style="background: var(--color-success);"></span><span>Decay</span><span>Video-artiger Nachleuchteffekt</span></div>
+            <div class="legend-row"><span class="dot" style="background: var(--color-success);"></span><span>Filter</span><span>Klick auf Tabellenzeile</span></div>
           </div>
         </section>
 
         <section class="card">
           <div class="muted" style="margin-bottom: .75rem;">Architektur</div>
-          <div class="footer-note">Python-Server empfängt UDP-Broadcasts, hält einen Ringpuffer und streamt Pulse per Server-Sent Events an die Weboberfläche. Die Animation entsteht aus laufenden Serverdaten und clientseitigem Canvas-Rendering.</div>
+          <div class="footer-note">Port {{ pulse_port }} liefert AoA-Pulse für die Radaransicht. Port {{ emitter_port }} liefert Emitter-ID, Frequenz und Pegel für die Live-Tabelle. Ein Klick auf einen Tabellen-Eintrag filtert die Radaransicht auf genau diesen Emitter, während andere Pulse schwach im Hintergrund sichtbar bleiben.</div>
         </section>
       </div>
     </aside>
 
     <main class="canvas-wrap">
       <div class="overlay">
-        <div class="chip">Port {{ udp_port }}</div>
+        <div class="chip">Pulse {{ pulse_port }}</div>
+        <div class="chip">Emitters {{ emitter_port }}</div>
         <div class="chip" id="statusChip">Verbinde…</div>
+        <div class="chip" id="overlayFilterChip">Filter: alle</div>
       </div>
       <canvas id="radarCanvas" width="1400" height="1400" aria-label="Radar Pulse Darstellung"></canvas>
     </main>
   </div>
 
-  <script>
-    const canvas = document.getElementById('radarCanvas');
-    const ctx = canvas.getContext('2d');
-    const pulses = [];
-    const maxPulseAgeMs = 2400;
-    let fps = 0, frames = 0, lastFpsTs = performance.now();
-
-    const byEmitter = {
-      alpha: '#57a5ad',
-      bravo: '#6aa8d8',
-      charlie: '#f2aa48'
-    };
-
-    function themeSync(){
-      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      byEmitter.alpha = dark ? '#57a5ad' : '#01696f';
-      byEmitter.bravo = dark ? '#6aa8d8' : '#006494';
-      byEmitter.charlie = dark ? '#f2aa48' : '#da7101';
-    }
-
-    function pushPulse(p){
-      pulses.push({...p, born: performance.now()});
-      if (pulses.length > 300) pulses.shift();
-      updateMetrics();
-    }
-
-    function updateMetrics(){
-      document.getElementById('pulseCount').textContent = pulses.length;
-      document.getElementById('fpsValue').textContent = String(fps);
-      const strongest = pulses.reduce((best, p) => (!best || p.strength > best.strength) ? p : best, null);
-      document.getElementById('maxAngle').textContent = strongest ? `${strongest.angle_deg.toFixed(1)}°` : '-';
-      document.getElementById('maxStrength').textContent = strongest ? strongest.strength.toFixed(2) : '-';
-    }
-
-    function drawRadar(ts){
-      const w = canvas.width, h = canvas.height;
-      const cx = w / 2, cy = h / 2;
-      const radius = Math.min(w, h) * 0.42;
-      const theme = getComputedStyle(document.documentElement);
-      ctx.fillStyle = theme.getPropertyValue('--color-bg').trim() || '#111315';
-      ctx.fillRect(0, 0, w, h);
-
-      const bgGrad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.1);
-      bgGrad.addColorStop(0, 'rgba(87,165,173,0.10)');
-      bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = bgGrad;
-      ctx.beginPath(); ctx.arc(cx, cy, radius * 1.08, 0, Math.PI * 2); ctx.fill();
-
-      for (let i = 1; i <= 4; i++) {
-        ctx.strokeStyle = `rgba(120, 180, 190, ${0.06 + i * 0.04})`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius * (i / 4), 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      for (let deg = 0; deg < 360; deg += 30) {
-        const a = (deg - 90) * Math.PI / 180;
-        ctx.strokeStyle = 'rgba(180, 220, 225, 0.10)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius);
-        ctx.stroke();
-        ctx.fillStyle = 'rgba(200, 220, 225, 0.6)';
-        ctx.font = '24px Satoshi';
-        ctx.fillText(String(deg) + '°', cx + Math.cos(a) * (radius + 28) - 18, cy + Math.sin(a) * (radius + 28) + 8);
+ <script>
+      function hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = ((hash << 5) - hash) + str.charCodeAt(i);
+          hash |= 0;
+        }
+        return Math.abs(hash);
       }
 
-      const now = performance.now();
-      while (pulses.length && now - pulses[0].born > maxPulseAgeMs) pulses.shift();
+      function hslToRgb(h, s, l) {
+        s = s / 100;
+        l = l / 100;
+        const c = (1 - Math.abs(2 * l - 1)) * s;
+        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+        const m = l - c / 2;
+        let r, g, b;
+        if      (h <  60) { r = c; g = x; b = 0; }
+        else if (h < 120) { r = x; g = c; b = 0; }
+        else if (h < 180) { r = 0; g = c; b = x; }
+        else if (h < 240) { r = 0; g = x; b = c; }
+        else if (h < 300) { r = x; g = 0; b = c; }
+        else              { r = c; g = 0; b = x; }
+        r = (r + m) * 255;
+        g = (g + m) * 255;
+        b = (b + m) * 255;
+        return [r, g, b];
+      }
 
-      pulses.forEach((p) => {
+      function colorToRgba(cssColorStr, alpha) {
+        const m = /hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)/i.exec(cssColorStr);
+        if (!m) return cssColorStr + (alpha < 1 ? `(${cssColorStr},${alpha})`.replace('rgba','rgba') : '');
+        const h = parseInt(m[1]);
+        const s = parseInt(m[2]);
+        const l = parseInt(m[3]);
+        const [r, g, b] = hslToRgb(h, s, l);
+        return `rgba(${r},${g},${b},${alpha})`;
+      }
+
+      const emitterColorCache = new Map();
+
+      function emitterColor(emitterId) {
+        const id = String(emitterId);
+        if (emitterColorCache.has(id)) {
+          return emitterColorCache.get(id);
+        }
+
+        const hash = hashString(id);
+        const hue = hash % 360;
+        const saturation = 68;
+        const lightness = document.documentElement.getAttribute('data-theme') === 'dark' ? 62 : 38;
+        const hsl = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+        emitterColorCache.set(id, hsl);
+        return hsl;
+      }
+
+      const canvas = document.getElementById('radarCanvas');
+      const ctx = canvas.getContext('2d');
+      const pulses = [];
+      const emitterMap = new Map();
+      const maxPulseAgeMs = 2400;
+      let selectedEmitterId = null;
+      let tableDirty = true;
+
+      function themeSync(){
+        theme = document.documentElement.getAttribute('data-theme');
+        tableDirty = true;
+        renderFilterState();
+      }
+
+      function getVisiblePulses() {
+        return pulses.filter((p) => !selectedEmitterId || p.emitter_id === selectedEmitterId);
+      }
+
+      function pushPulse(p){
+        pulses.push({...p, born: performance.now()});
+        if (pulses.length > 500) pulses.shift();
+        updateMetrics();
+      }
+
+      function upsertEmitterStatus(item){
+        emitterMap.set(item.emitter_id, item);
+        tableDirty = true;
+        updateMetrics();
+      }
+
+      function renderFilterState(){
+        const label = document.getElementById('activeFilterLabel');
+        const overlayChip = document.getElementById('overlayFilterChip');
+        const clearButton = document.getElementById('clearFilterButton');
+
+        if (selectedEmitterId) {
+          label.textContent = `Filter: ${selectedEmitterId}`;
+          label.classList.remove('is-empty');
+          overlayChip.textContent = `Filter: ${selectedEmitterId}`;
+          overlayChip.classList.add('active-filter');
+          clearButton.disabled = false;
+        } else {
+          label.textContent = 'Filter: alle Emitter';
+          label.classList.add('is-empty');
+          overlayChip.textContent = 'Filter: alle';
+          overlayChip.classList.remove('active-filter');
+          clearButton.disabled = true;
+        }
+      }
+
+      function renderEmitterTable(force = false){
+        if (!tableDirty && !force) return;
+        const body = document.getElementById('emitterTableBody');
+        body.innerHTML = '';
+        const entries = [...emitterMap.values()].sort((a,b) => a.emitter_id.localeCompare(b.emitter_id));
+        entries.forEach(item => {
+          const tr = document.createElement('tr');
+          const color = emitterColor(item.emitter_id);
+          tr.dataset.emitterId = item.emitter_id;
+          if (selectedEmitterId === item.emitter_id) tr.classList.add('is-active');
+          tr.innerHTML = `
+            <td class="emitter-name">
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:8px;"></span>
+              ${item.emitter_id}
+            </td>
+            <td>${item.frequency_mhz.toFixed(1)} MHz</td>
+            <td>${item.level.toFixed(1)} dB</td>
+            <td>${item.age_ms.toFixed(0)} ms</td>
+          `;
+          body.appendChild(tr);
+        });
+        tableDirty = false;
+      }
+
+      function updateMetrics(){
+        const visiblePulses = getVisiblePulses();
+        document.getElementById('pulseCount').textContent = visiblePulses.length;
+        document.getElementById('emitterCount').textContent = emitterMap.size;
+        const strongest = visiblePulses.reduce((best, p) => (!best || p.strength > best.strength) ? p : best, null);
+        document.getElementById('maxAngle').textContent = strongest ? `${strongest.angle_deg.toFixed(1)}°` : '-';
+        document.getElementById('maxStrength').textContent = strongest ? strongest.strength.toFixed(2) : '-';
+      }
+
+      function drawPulse(p, radius, cx, cy, now, alphaScale) {
         const age = now - p.born;
-        const fade = Math.max(0, 1 - age / maxPulseAgeMs);
+        const fade = Math.max(0, 1 - age / maxPulseAgeMs) * alphaScale;
         const angle = (p.angle_deg - 90) * Math.PI / 180;
         const r = Math.max(20, p.strength * radius);
         const x = cx + Math.cos(angle) * r;
         const y = cy + Math.sin(angle) * r;
-        const color = byEmitter[p.emitter_id] || byEmitter.alpha;
 
-        ctx.strokeStyle = color.replace(')', '');
+        const hslColor = emitterColor(p.emitter_id);
+        const rgbaStroke = colorToRgba(hslColor, 0.32 * fade);
+        const rgbaGlowStart = colorToRgba(hslColor, 0.95 * fade);
+        const rgbaGlowMid   = colorToRgba(hslColor, 0.45 * fade);
+        const rgbaGlowEnd   = colorToRgba(hslColor, 0);
+        const rgbaDot       = colorToRgba(hslColor, 0.9 * fade);
+
         ctx.beginPath();
         ctx.moveTo(cx + Math.cos(angle) * 18, cy + Math.sin(angle) * 18);
         ctx.lineTo(x, y);
-        ctx.strokeStyle = color + Math.round(fade * 80).toString(16).padStart(2, '0');
+        ctx.strokeStyle = rgbaStroke;
         ctx.lineWidth = 2;
         ctx.stroke();
 
         const glow = ctx.createRadialGradient(x, y, 0, x, y, 18 + p.strength * 34);
-        const rgba = hexToRgba(color, 0.5 * fade);
-        glow.addColorStop(0, hexToRgba(color, 0.95 * fade));
-        glow.addColorStop(0.4, rgba);
-        glow.addColorStop(1, hexToRgba(color, 0));
+        glow.addColorStop(0, rgbaGlowStart);
+        glow.addColorStop(0.4, rgbaGlowMid);
+        glow.addColorStop(1, rgbaGlowEnd);
         ctx.fillStyle = glow;
         ctx.beginPath();
         ctx.arc(x, y, 18 + p.strength * 34, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = hexToRgba(color, 0.9 * fade);
+        ctx.fillStyle = rgbaDot;
         ctx.beginPath();
         ctx.arc(x, y, 3 + p.strength * 9, 0, Math.PI * 2);
         ctx.fill();
-      });
+      }
 
-      ctx.fillStyle = 'rgba(220, 240, 245, 0.9)';
-      ctx.beginPath();
-      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-      ctx.fill();
+      function drawRadar(){
+        const w = canvas.width, h = canvas.height;
+        const cx = w / 2, cy = h / 2;
+        const radius = Math.min(w, h) * 0.42;
+        ctx.clearRect(0, 0, w, h);
 
-      frames++;
-      if (ts - lastFpsTs >= 1000) {
-        fps = frames;
-        frames = 0;
-        lastFpsTs = ts;
+        const bgGrad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.1);
+        bgGrad.addColorStop(0, 'rgba(87,165,173,0.10)');
+        bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = bgGrad;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * 1.08, 0, Math.PI * 2); ctx.fill();
+
+        for (let i = 1; i <= 4; i++) {
+          ctx.strokeStyle = `rgba(120, 180, 190, ${0.06 + i * 0.04})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius * (i / 4), 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        for (let deg = 0; deg < 360; deg += 30) {
+          const a = (deg - 90) * Math.PI / 180;
+          ctx.strokeStyle = 'rgba(180, 220, 225, 0.10)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius);
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(200, 220, 225, 0.6)';
+          ctx.font = '24px Satoshi';
+          ctx.fillText(String(deg) + '°', cx + Math.cos(a) * (radius + 28) - 18, cy + Math.sin(a) * (radius + 28) + 8);
+        }
+
+        const now = performance.now();
+        while (pulses.length && now - pulses[0].born > maxPulseAgeMs) pulses.shift();
+
+        if (selectedEmitterId) {
+          pulses.filter(p => p.emitter_id !== selectedEmitterId).forEach(p => drawPulse(p, radius, cx, cy, now, 0.16));
+          pulses.filter(p => p.emitter_id === selectedEmitterId).forEach(p => drawPulse(p, radius, cx, cy, now, 1.0));
+        } else {
+          pulses.forEach(p => drawPulse(p, radius, cx, cy, now, 1.0));
+        }
+
+        ctx.fillStyle = 'rgba(220, 240, 245, 0.9)';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        requestAnimationFrame(drawRadar);
+      }
+
+      async function bootstrap() {
+        const res = await fetch('/api/snapshot');
+        const data = await res.json();
+        pulses.length = 0;
+        emitterMap.clear();
+        data.pulses.forEach(pushPulse);
+        data.emitters.forEach(upsertEmitterStatus);
+        renderEmitterTable(true);
+        renderFilterState();
         updateMetrics();
       }
-      requestAnimationFrame(drawRadar);
-    }
 
-    function hexToRgba(hex, alpha) {
-      const clean = hex.replace('#', '');
-      const bigint = parseInt(clean, 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      return `rgba(${r},${g},${b},${alpha})`;
-    }
+      let eventSource = null;
+      let reconnectTimer = null;
 
-    async function bootstrap() {
-      const res = await fetch('/api/snapshot');
-      const data = await res.json();
-      data.pulses.forEach(pushPulse);
-    }
+      function connectStream(){
+        const status = document.getElementById('statusChip');
+        if (eventSource) eventSource.close();
+        status.textContent = 'Verbinde…';
+        eventSource = new EventSource('/stream');
 
-    let eventSource = null;
-    let reconnectTimer = null;
+        eventSource.addEventListener('open', () => {
+          status.textContent = 'Live';
+          if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+          }
+        });
 
-    function connectStream() {
-      const status = document.getElementById('statusChip');
+        eventSource.addEventListener('bootstrap', (e) => {
+          const data = JSON.parse(e.data);
+          pulses.length = 0;
+          emitterMap.clear();
+          data.pulses.forEach(pushPulse);
+          data.emitters.forEach(upsertEmitterStatus);
+          renderEmitterTable(true);
+          renderFilterState();
+          updateMetrics();
+        });
 
-      if (eventSource) {
-        eventSource.close();
+        eventSource.addEventListener('pulse', (e) => {
+          pushPulse(JSON.parse(e.data));
+          status.textContent = 'Live';
+        });
+
+        eventSource.addEventListener('emitter_status', (e) => {
+          upsertEmitterStatus(JSON.parse(e.data));
+          status.textContent = 'Live';
+        });
+
+        eventSource.onerror = () => {
+          status.textContent = 'Reconnect…';
+          if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+          }
+          if (!reconnectTimer) {
+            reconnectTimer = setTimeout(() => {
+              reconnectTimer = null;
+              connectStream();
+            }, 1200);
+          }
+        };
       }
 
-      status.textContent = 'Verbinde…';
-      eventSource = new EventSource('/stream');
-
-      eventSource.addEventListener('open', () => {
-        status.textContent = 'Live';
-        if (reconnectTimer) {
-          clearTimeout(reconnectTimer);
-          reconnectTimer = null;
-        }
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        themeSync();
+        renderEmitterTable(true);
       });
 
-      eventSource.addEventListener('bootstrap', (e) => {
-        const data = JSON.parse(e.data);
-        pulses.length = 0;
-        data.pulses.forEach(pushPulse);
+      document.getElementById('clearFilterButton').addEventListener('click', () => {
+        selectedEmitterId = null;
+        renderFilterState();
+        renderEmitterTable(true);
+        updateMetrics();
       });
 
-      eventSource.addEventListener('pulse', (e) => {
-        pushPulse(JSON.parse(e.data));
-        status.textContent = 'Live';
+      document.getElementById('emitterTableBody').addEventListener('click', (event) => {
+        const row = event.target.closest('tr[data-emitter-id]');
+        if (!row) return;
+        const emitterId = row.dataset.emitterId;
+        selectedEmitterId = selectedEmitterId === emitterId ? null : emitterId;
+        renderFilterState();
+        renderEmitterTable(true);
+        updateMetrics();
       });
 
-      eventSource.onerror = () => {
-        status.textContent = 'Reconnect…';
-        if (eventSource) {
-          eventSource.close();
-          eventSource = null;
-        }
-        if (!reconnectTimer) {
-          reconnectTimer = setTimeout(() => {
-            reconnectTimer = null;
-            connectStream();
-          }, 1200);
-        }
-      };
-    }
-
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
       themeSync();
-    });
+      bootstrap().catch(() => {});
+      connectStream();
+      requestAnimationFrame(drawRadar);
 
-    themeSync();
-    bootstrap().catch(() => {});
-    connectStream();
-    requestAnimationFrame(drawRadar);
-  </script>
+      setInterval(() => {
+        let changed = false;
+        for (const [key, value] of emitterMap.entries()) {
+          value.age_ms += 500;
+          emitterMap.set(key, value);
+          changed = true;
+        }
+        if (changed) {
+          tableDirty = true;
+          renderEmitterTable();
+        }
+      }, 500);
+    </script>
 </body>
 </html>
