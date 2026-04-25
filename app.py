@@ -22,6 +22,8 @@ SIM_EMITTERS = [
     {"id": "alpha", "base": 28, "swing": 16, "freq": 9340.0, "level": -48.0},
     {"id": "bravo", "base": 146, "swing": 28, "freq": 9780.0, "level": -52.0},
     {"id": "charlie", "base": 292, "swing": 22, "freq": 10420.0, "level": -57.0},
+    {"id": "delta", "base": 100, "swing": 100, "freq": 14420.0, "level": -37.0},
+    {"id": "echo", "base": 200, "swing": 1, "freq": 13420.0, "level": -77.0},
 ]
 
 
